@@ -1,0 +1,61 @@
+name: Update trade breakdown videos
+
+# Reads your YouTube trade-breakdown playlist and saves it to videos.json.
+# The website reads videos.json, so new videos in the playlist appear automatically.
+# No API key and no secrets are needed.
+
+on:
+  schedule:
+    - cron: "17 * * * *"   # every hour
+  workflow_dispatch:       # lets you press "Run workflow" by hand
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-videos
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch playlist feed
+        env:
+          # Playlist: CRT sniper trade break down's (the ID is the part after list= in the playlist link)
+          PLAYLIST_ID: PLL9JUfhCNYEQ
+        run: |
+          python3 - <<'PY'
+          import json, os, re, sys, urllib.request
+          import xml.etree.ElementTree as ET
+          pid = os.environ["PLAYLIST_ID"].strip()
+          if not re.fullmatch(r"[A-Za-z0-9_-]{10,60}", pid) or pid == "PASTE_PLAYLIST_ID_HERE":
+              sys.exit("Set PLAYLIST_ID in this file first.")
+          url = "https://www.youtube.com/feeds/videos.xml?playlist_id=" + pid
+          req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+          data = urllib.request.urlopen(req, timeout=30).read()
+          ns = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
+          videos = []
+          for e in ET.fromstring(data).findall("a:entry", ns):
+              vid = e.findtext("yt:videoId", default="", namespaces=ns)
+              title = (e.findtext("a:title", default="", namespaces=ns) or "").strip()
+              pub = e.findtext("a:published", default="", namespaces=ns)
+              if re.fullmatch(r"[A-Za-z0-9_-]{11}", vid) and title:
+                  videos.append({"id": vid, "title": title, "published": pub})
+          if not videos:
+              sys.exit("No videos found. Check the playlist ID and that the playlist is public.")
+          videos.sort(key=lambda v: v["published"], reverse=True)
+          with open("videos.json", "w", encoding="utf-8") as f:
+              json.dump({"videos": videos[:12]}, f, ensure_ascii=False, indent=2)
+              f.write("\n")
+          print("Saved", len(videos[:12]), "videos")
+          PY
+
+      - name: Save changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos.json
+          git diff --cached --quiet || (git commit -m "Update trade breakdown videos" && git push)
