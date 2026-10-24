@@ -1,0 +1,17 @@
+AHMAD CRT SNIPER - multi-page website (version 2)
+
+BEFORE YOU UPLOAD (backup)
+1. In your repo, open index.html, tap the download icon (or Raw, then Save), and keep the file as your backup of the old single-page site.
+
+UPLOAD
+2. Unzip this file. In your repo tap Add file > Upload files and select ALL files from the unzipped folder EXCEPT this instructions file:
+   index.html, about.html, learn.html, courses.html, tools.html, breakdown.html, analysis.html, brokers.html, faq.html, contact.html,
+   privacy.html, terms.html, refund.html, delivery.html, 404.html, style.css, app.js, founder.webp, headway-logo.png, justmarkets-logo.png,
+   robots.txt, sitemap.xml
+3. Tap Commit changes. Wait 1-2 minutes.
+
+DO NOT DELETE these existing repo files (the site still uses them)
+   videos.json, update_videos.py, .github/workflows/update-videos.yml, chart-v100-0417.webp, chart-v100-0642.webp, chart-v25-1604.webp
+
+CHECK
+4. Open https://ahmadcrt.github.io and visit every menu item. Refresh each page once.
