@@ -17,7 +17,7 @@
 <header class="top"><div class="wrap bar">
 <a class="brand" href="index.html" aria-label="AHMAD CRT SNIPER home">AHMAD <span>CRT SNIPER</span></a>
 <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
-<nav class="menu" id="menu" aria-label="Main"><a href="index.html">HOME</a><a href="about.html">ABOUT</a><a href="learn.html">LEARN CRT</a><a href="courses.html">COURSES</a><a href="tools.html" aria-current="page">TOOLS</a><a href="breakdown.html">BREAKDOWNS</a><a href="analysis.html">ANALYSIS</a><a href="brokers.html">BROKERS</a><a href="faq.html">FAQ</a><a href="contact.html">CONTACT</a></nav>
+<nav class="menu" id="menu" aria-label="Main"><a href="index.html">HOME</a><a href="about.html">ABOUT</a><a href="learn.html">LEARN CRT</a><a href="courses.html">COURSES</a><a href="tools.html" aria-current="page">TOOLS</a><a href="breakdown.html">BREAKDOWNS</a><a href="analysis.html">ANALYSIS</a><a href="brokers.html">BROKERS</a><a href="contact.html">CONTACT</a></nav>
 </div></header>
 <div class="pagehead"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Trading Tools</p><h1>Trading Tools</h1><p>A risk calculator and a trading journal, both free to use.</p></div></div>
 <main id="main" tabindex="-1">
@@ -43,22 +43,26 @@
 </div></section><section id="journal" class="alt"><div class="wrap">
 <p class="eyebrow">Student tool</p><h2>Trading Journal</h2>
 <p class="lead2">Record each trade, then review your results honestly.</p>
-<p class="disc">Entries are saved in this browser on this device only. They are not synced to other devices or browsers, are not stored in the cloud, and are not password protected. Clearing your browser data or using private browsing can delete them. Never enter passwords or broker login details.</p>
+<div id="jGate"></div><div id="jApp">
 <form id="jForm" class="card" novalidate>
 <div class="fgrid">
 <div><label class="f" for="jDate">Trade date</label><input class="t" id="jDate" type="date"></div>
+<div><label class="f" for="jTime">Trade time (optional)</label><input class="t" id="jTime" type="time"></div>
 <div><label class="f" for="jIns">Instrument or currency pair</label><input class="t" id="jIns" maxlength="30" autocomplete="off"></div>
 <div><label class="f" for="jDir">Direction</label><select id="jDir"><option value="BUY">BUY</option><option value="SELL">SELL</option></select></div>
 <div><label class="f" for="jStr">Strategy or setup</label><input class="t" id="jStr" maxlength="40" autocomplete="off" placeholder="e.g. CRT low sweep"></div>
+<div><label class="f" for="jSes">Trading session (optional)</label><select id="jSes"><option value="">Not set</option><option>Asian</option><option>London</option><option>New York</option><option>Other</option></select></div>
 <div><label class="f" for="jEnt">Entry price</label><input class="t" id="jEnt" inputmode="decimal" autocomplete="off"></div>
 <div><label class="f" for="jSl">Stop-loss price</label><input class="t" id="jSl" inputmode="decimal" autocomplete="off"></div>
 <div><label class="f" for="jTp">Take-profit price</label><input class="t" id="jTp" inputmode="decimal" autocomplete="off"></div>
 <div><label class="f" for="jRisk">Risk percentage (%)</label><input class="t" id="jRisk" inputmode="decimal" autocomplete="off"></div>
+<div><label class="f" for="jRamt">Risk amount (optional)</label><input class="t" id="jRamt" inputmode="decimal" autocomplete="off"></div>
 <div><label class="f" for="jRr">Planned risk-to-reward (blank = calculated from prices)</label><input class="t" id="jRr" inputmode="decimal" autocomplete="off" placeholder="e.g. 2"></div>
 <div><label class="f" for="jRes">Result</label><select id="jRes"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></div>
 <div><label class="f" for="jPl">Profit or loss amount (use a minus sign for a loss)</label><input class="t" id="jPl" inputmode="decimal" autocomplete="off"></div>
 </div>
 <label class="f" for="jNotes">Notes about the trade</label><textarea id="jNotes" rows="3" maxlength="600"></textarea>
+<label class="f" for="jMis">Mistakes made (optional)</label><textarea id="jMis" rows="3" maxlength="600"></textarea>
 <label class="f" for="jLes">Lessons learned</label><textarea id="jLes" rows="3" maxlength="600"></textarea>
 <div id="jMsg" aria-live="polite"></div>
 <div class="btns" style="margin-top:16px"><button class="btn g" type="submit" id="jSave">Add entry</button><button class="btn o" type="button" id="jCancel" hidden>Cancel edit</button></div>
@@ -67,9 +71,9 @@
 <div class="stats" id="jStats"></div>
 <p class="note" id="jPerf"></p>
 <h3 style="margin-top:26px">Saved entries</h3>
-<div class="fgrid"><div><label class="f" for="fIns">Instrument</label><select id="fIns"></select></div><div><label class="f" for="fStr">Strategy</label><select id="fStr"></select></div><div><label class="f" for="fRes">Result</label><select id="fRes"><option value="">All results</option><option>Win</option><option>Loss</option><option>Breakeven</option><option>Open</option></select></div></div>
+<div class="fgrid"><div><label class="f" for="fIns">Instrument</label><select id="fIns"></select></div><div><label class="f" for="fStr">Strategy</label><select id="fStr"></select></div><div><label class="f" for="fQ">Search</label><input class="t" id="fQ" type="search" maxlength="60" autocomplete="off"></div><div><label class="f" for="fRes">Result</label><select id="fRes"><option value="">All results</option><option>Win</option><option>Loss</option><option>Breakeven</option><option>Open</option></select></div></div>
 <div id="jList" style="margin-top:14px"></div>
-</div></section><section><div class="wrap"><h3>Related pages</h3><div class="rel"><a class="btn o sm" href="learn.html#dashboard">Student dashboard</a><a class="btn o sm" href="learn.html#simulator">CRT simulator</a><a class="btn o sm" href="learn.html">Learn CRT</a></div></div></section>
+</div></div></section><section><div class="wrap"><h3>Related pages</h3><div class="rel"><a class="btn o sm" href="learn.html#dashboard">Student dashboard</a><a class="btn o sm" href="learn.html#simulator">CRT simulator</a><a class="btn o sm" href="learn.html">Learn CRT</a></div></div></section>
 </main>
 <footer><div class="wrap">
 <div class="cols">
@@ -81,5 +85,8 @@
 <p>&copy; AHMAD CRT SNIPER. All rights reserved.</p>
 </div></footer>
 <a class="wa" href="https://wa.me/2349166116812?text=Hello%20Ahmad%2C%20I%20have%20a%20question%20about%20your%20courses." aria-label="Chat on WhatsApp">WhatsApp</a>
+<script src="supabase-config.js" defer></script>
+<script src="cloud.js" defer></script>
 <script src="app.js" defer></script>
+<script src="account.js" defer></script>
 </body></html>

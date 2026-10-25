@@ -117,8 +117,9 @@ nav.menu .ddm a{padding-left:22px;font-weight:600}
 .ddb{display:block;background:none;border:0;color:var(--text);font-family:inherit;font-weight:700;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:8px 2px}
 .ddm{display:none;position:absolute;right:0;top:100%;background:var(--navy);border:1px solid var(--line);border-radius:12px;min-width:230px;padding:6px 0;z-index:70}
 .dd.open .ddm{display:block}nav.menu .ddm a{padding:12px 18px}nav.menu{gap:10px}nav.menu>a,.ddb{white-space:nowrap;font-size:13px;letter-spacing:.02em}.brand{white-space:nowrap}.ddb{line-height:1.65}}
-@media(min-width:1180px){nav.menu{gap:14px}nav.menu>a,.ddb{font-size:14px;letter-spacing:.04em}}
-@media(min-width:900px) and (max-width:1049px){
+@media(min-width:1200px){header.top .wrap{max-width:1280px}nav.menu{gap:11px}nav.menu>a,.ddb{font-size:13px;letter-spacing:.02em}}
+@media(min-width:1500px){nav.menu{gap:16px}nav.menu>a,.ddb{font-size:14px;letter-spacing:.04em}}
+@media(min-width:900px) and (max-width:1199px){
 .burger{display:block}
 nav.menu{display:none;position:absolute;left:0;right:0;top:100%;background:var(--navy);border-bottom:1px solid var(--line);padding:6px 20px 14px;gap:0}
 nav.menu.open{display:block}
@@ -127,7 +128,7 @@ nav.menu>a{display:block;padding:13px 4px;border-bottom:1px solid var(--line);fo
 nav.menu .ddm a{display:block;padding:13px 4px 13px 22px;border-bottom:1px solid var(--line);font-size:17px;font-weight:600}}
 
 nav.menu a[aria-current=page]{color:var(--gold2)}
-@media(min-width:1050px){nav.menu a[aria-current=page]{box-shadow:0 2px 0 var(--gold)}}
+@media(min-width:1200px){nav.menu a[aria-current=page]{box-shadow:0 2px 0 var(--gold)}}
 .pagehead{padding:46px 0 10px;background:radial-gradient(ellipse at 50% 0,#16305f 0,var(--bg) 70%);border-bottom:1px solid var(--line)}
 .pagehead h1{font-size:34px;margin:0 0 8px}.pagehead p{color:var(--sub);max-width:680px;margin:0 0 22px}
 .crumbs{font-size:15px;color:var(--sub);margin:0 0 10px}.crumbs a{color:var(--gold2)}
@@ -135,3 +136,11 @@ nav.menu a[aria-current=page]{color:var(--gold2)}
 footer .cols{display:grid;gap:18px}footer h4{margin:0 0 6px;color:var(--text);font-size:16px;letter-spacing:.06em}
 footer .cols a{display:block;margin:0;padding:6px 0}
 @media(min-width:800px){footer .cols{grid-template-columns:repeat(3,1fr)}.pagehead h1{font-size:44px}}
+
+[hidden]{display:none!important}
+#toast{position:fixed;left:14px;right:96px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:520px;background:#2a1215;border:1px solid #ff8f7e;color:#ffd3cb;padding:12px 14px;border-radius:12px;z-index:80;font-weight:600}
+nav.menu .navbtn{background:none;border:0;color:var(--text);font-family:inherit;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:left;padding:13px 4px;font-size:17px;min-height:44px}
+nav.menu .navcta{color:var(--gold2)}
+@media(min-width:1200px){nav.menu .navbtn{font-size:13px;padding:8px 2px}nav.menu .navcta{border:2px solid var(--gold);border-radius:10px;padding:6px 10px;color:var(--gold2)}}
+@media(min-width:900px) and (max-width:1199px){nav.menu .navbtn{display:block;width:100%;border-bottom:1px solid var(--line)}}
+.dd,.ddb,.ddm{display:none}
