@@ -231,14 +231,14 @@
   function toast(msg) { var t = $('#toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 8000); }
   function failSave(e) { toast('Could not save to your account: ' + (Cloud.friendly ? Cloud.friendly(e) : 'please try again.') + ' Your change is kept on this device only.'); }
   var sync = {
-    lesson: function (n) { if (loggedIn()) Cloud.db.insertIgnore('lesson_progress', { lesson: n }, 'user_id,lesson').catch(failSave); },
+    lesson: function (n) { if (loggedIn()) Cloud.db.insertIgnore('learning_progress', { lesson: n }, 'user_id,lesson').catch(failSave); },
     quiz: function (s, t) { if (loggedIn()) Cloud.db.insert('quiz_results', { score: s, total: t }).catch(failSave); },
     exercise: function (x) { if (loggedIn()) Cloud.db.insert('exercise_log', { level: x.l, exercise: x.n, correct: x.ok }).catch(failSave); },
     level: function (l, s) { if (loggedIn()) Cloud.db.insert('sim_results', { level: l, score: s }).catch(failSave); }
   };
   function clearLocal() { try { localStorage.removeItem(LES); localStorage.removeItem(QZ); localStorage.removeItem(SIM); } catch (e) { } }
   function pullAll() {
-    return Promise.all([Cloud.db.select('lesson_progress', 'select=lesson'), Cloud.db.select('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), Cloud.db.select('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), Cloud.db.select('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=30')]).then(function (r) {
+    return Promise.all([Cloud.db.select('learning_progress', 'select=lesson'), Cloud.db.select('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), Cloud.db.select('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), Cloud.db.select('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=30')]).then(function (r) {
       S.set(LES, (r[0] || []).map(function (x) { return x.lesson; }));
       var q = r[1] || [];
       if (q.length) { var best = 0; q.forEach(function (x) { best = Math.max(best, x.score); }); S.set(QZ, { last: q[0].score, total: q[0].total, best: best, attempts: q.length }); } else { try { localStorage.removeItem(QZ); } catch (e) { } }
@@ -349,17 +349,17 @@
     return x;
   }
   function jLoad() {
-    if (jMode() === 'cloud') return Cloud.db.select('journal_entries', 'select=*&order=trade_date.desc,created_at.desc&limit=1000').then(function (a) { return (a || []).map(norm).filter(Boolean); });
+    if (jMode() === 'cloud') return Cloud.db.select('trading_journal', 'select=*&order=trade_date.desc,created_at.desc&limit=1000').then(function (a) { return (a || []).map(norm).filter(Boolean); });
     var a = S.get(JLOCAL, []); return Promise.resolve((Array.isArray(a) ? a : []).map(norm).filter(Boolean));
   }
   function jPut(rec) {
-    if (jMode() === 'cloud') return Cloud.db.upsert('journal_entries', rec, 'id');
+    if (jMode() === 'cloud') return Cloud.db.upsert('trading_journal', rec, 'id');
     var all = (S.get(JLOCAL, []) || []).map(norm).filter(Boolean), i = all.findIndex(function (y) { return y.id === rec.id; });
     if (i > -1) all[i] = rec; else all.push(rec);
     return S.set(JLOCAL, all) ? Promise.resolve() : Promise.reject(new Error('local'));
   }
   function jDel(id) {
-    if (jMode() === 'cloud') return Cloud.db.remove('journal_entries', 'id=eq.' + encodeURIComponent(id));
+    if (jMode() === 'cloud') return Cloud.db.remove('trading_journal', 'id=eq.' + encodeURIComponent(id));
     S.set(JLOCAL, (S.get(JLOCAL, []) || []).map(norm).filter(Boolean).filter(function (y) { return y.id !== id; })); return Promise.resolve();
   }
   function jfail(e) { return (jMode() === 'cloud' && Cloud.friendly ? Cloud.friendly(e) : 'Could not save in this browser.') + ' Your entry is still in the form, so you can try again.'; }
@@ -376,10 +376,27 @@
     var closed = w + l + b; return { n: a.length, w: w, l: l, b: b, o: o, closed: closed, wr: closed ? Math.round(w / closed * 1000) / 10 : null, pl: hasPl ? clean(pl) : null, rr: nrr ? Math.round(rr / nrr * 100) / 100 : null, nrr: nrr };
   }
   window.CRT_jstats = jstats;
+  var skipImport = false;
+  function hashUuid(s) { var out = ''; for (var i = 0; i < 4; i++) { var h = 0x811c9dc5 ^ (i * 0x9e3779b1); for (var j = 0; j < s.length; j++) { h ^= s.charCodeAt(j); h = Math.imul(h, 16777619) >>> 0; } h = (h ^ (h >>> 15)) >>> 0; out += ('00000000' + h.toString(16)).slice(-8); } return out.slice(0, 8) + '-' + out.slice(8, 12) + '-4' + out.slice(13, 16) + '-8' + out.slice(17, 20) + '-' + out.slice(20, 32); }
+  function jOffer(g) {
+    var loc = (S.get(JLOCAL, []) || []).map(norm).filter(Boolean);
+    if (!loc.length || S.get('crt.journal.imported', false) || skipImport) return;
+    var d = document.createElement('div'); d.className = 'card'; d.style.marginTop = '14px';
+    d.innerHTML = '<h3>Import your saved entries?</h3><p>This browser has ' + loc.length + ' journal entr' + (loc.length === 1 ? 'y' : 'ies') + ' saved from before accounts. Import them into your account so they are available on every device. Your browser copy is kept.</p><div class="btns"><button type="button" class="btn g sm" id="jImp">Import into my account</button><button type="button" class="btn o sm" id="jSkip">Not now</button></div><p class="err" id="jImpMsg" role="alert"></p>';
+    g.appendChild(d);
+    $('#jSkip').addEventListener('click', function () { skipImport = true; d.remove(); });
+    $('#jImp').addEventListener('click', function () {
+      var b = this, good = loc.filter(function (x) { return /^\d{4}-\d{2}-\d{2}$/.test(x.trade_date) && x.instrument && x.instrument.length <= 30 && (x.direction === 'BUY' || x.direction === 'SELL'); });
+      if (!good.length) { $('#jImpMsg').textContent = 'None of the saved entries could be imported because they are missing required details.'; return; }
+      b.disabled = true; b.textContent = 'Importing\u2026';
+      var uid = Cloud.user().id, rows = good.map(function (x) { var r = {}; for (var k in x) r[k] = x[k]; r.id = hashUuid(uid + ':' + x.id); return r; });
+      Cloud.db.upsert('trading_journal', rows, 'id').then(function () { S.set('crt.journal.imported', true); d.remove(); return jrender(); }).then(function () { jmsg('Imported ' + good.length + ' entr' + (good.length === 1 ? 'y' : 'ies') + ' into your account.' + (good.length < loc.length ? ' ' + (loc.length - good.length) + ' could not be imported.' : '') + ' Your browser copy was kept.', true); dash(); }).catch(function (e) { b.disabled = false; b.textContent = 'Import into my account'; $('#jImpMsg').textContent = Cloud.friendly(e); });
+    });
+  }
   function jgate() {
     var m = jMode(), g = $('#jGate'), app = $('#jApp'); if (!g) return;
     if (m === 'login') { g.innerHTML = '<div class="card"><h3>Log in to use your journal</h3><p>Your journal is saved to your own account, so you can open it on any device. Public lessons and tools stay free without an account.</p><div class="btns"><a class="btn g" href="account.html#login">Log In</a><a class="btn o" href="account.html#signup">Create Free Account</a></div></div>'; app.hidden = true; }
-    else { app.hidden = false; g.innerHTML = m === 'cloud' ? '<p class="okbox">Signed in. Entries are saved to your account and available on any device where you log in.</p>' : '<p class="disc">Account features are not set up on this site yet, so entries are saved in this browser on this device only. They are not synced, not cloud storage and not password protected. Never enter passwords or broker login details.</p>'; }
+    else { app.hidden = false; g.innerHTML = m === 'cloud' ? '<p class="okbox">Signed in. Entries are saved to your account and available on any device where you log in.</p>' : '<p class="disc">Account features are not set up on this site yet, so entries are saved in this browser on this device only. They are not synced, not cloud storage and not password protected. Never enter passwords or broker login details.</p>';  if (m === 'cloud') jOffer(g); }
   }
   function jrender() {
     var box = $('#jList'); if (!box) return Promise.resolve();
@@ -468,12 +485,12 @@
     var done = function () { clearLocal(); st = { l: 'beginner', i: 0, score: 0, done: false }; if (sBox) drawSim(); var b = $('#doneBtn'); if (b) b.textContent = 'Mark lesson complete'; dash(); };
     if (!cloud) return done();
     var f = 'user_id=eq.' + encodeURIComponent(Cloud.user().id);
-    Promise.all(['lesson_progress', 'quiz_results', 'sim_results', 'exercise_log'].map(function (t) { return Cloud.db.remove(t, f); })).then(done).catch(function (e) { toast(Cloud.friendly(e)); });
+    Promise.all(['learning_progress', 'quiz_results', 'sim_results', 'exercise_log'].map(function (t) { return Cloud.db.remove(t, f); })).then(done).catch(function (e) { toast(Cloud.friendly(e)); });
   });
   /* ---------- account sync ---------- */
   function startSync() {
     var loc = lessonsDone().filter(function (x) { return x >= 1 && x <= 8; });
-    Promise.all(loc.map(function (n) { return Cloud.db.insertIgnore('lesson_progress', { lesson: n }, 'user_id,lesson'); }))
+    Promise.all(loc.map(function (n) { return Cloud.db.insertIgnore('learning_progress', { lesson: n }, 'user_id,lesson'); }))
       .then(pullAll).then(function () { afterAuth(); }).catch(function (e) { toast(Cloud.friendly(e)); afterAuth(); });
   }
   function afterAuth() { jInit(); dash(); var b = $('#doneBtn'); if (b && b.parentNode) { b.parentNode.remove(); addDone(); } }

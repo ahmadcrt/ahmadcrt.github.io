@@ -18,6 +18,8 @@
   function nice(e) {
     if (!(e instanceof Error) || e.status === undefined) return 'Network problem. Check your connection and try again.';
     var m = String(e.message || '').toLowerCase(), c = String(e.code || '').toLowerCase();
+    if (e.status === 404 && (c === 'pgrst205' || m.indexOf('schema cache') > -1 || m.indexOf('could not find the table') > -1)) return 'The database is not set up yet. The site owner needs to run the setup script in Supabase.';
+    if (m.indexOf('api key') > -1) return 'Accounts are not configured correctly (the site key was rejected). Please tell the site owner.';
     if (c === 'email_not_confirmed' || m.indexOf('not confirmed') > -1) return 'Please confirm your email first. Check your inbox for the confirmation link.';
     if (c === 'invalid_credentials' || m.indexOf('invalid login') > -1) return 'Incorrect email or password.';
     if (c === 'weak_password' || m.indexOf('password') > -1 && m.indexOf('least') > -1) return 'That password is too weak. Use at least 8 characters.';
@@ -30,7 +32,8 @@
   function raw(path, o) {
     o = o || {};
     var h = { apikey: cfg.anonKey, 'Content-Type': 'application/json' };
-    h.Authorization = 'Bearer ' + (o.token || cfg.anonKey);
+    /* New-style keys (sb_publishable_...) are not JWTs and must only be sent in the apikey header. */
+    if (o.token) h.Authorization = 'Bearer ' + o.token; else if (!/^sb_/.test(cfg.anonKey)) h.Authorization = 'Bearer ' + cfg.anonKey;
     for (var k in (o.headers || {})) h[k] = o.headers[k];
     return fetch(base + path, { method: o.method || 'GET', headers: h, body: o.body !== undefined ? JSON.stringify(o.body) : undefined }).then(function (r) {
       return r.text().then(function (t) {

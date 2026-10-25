@@ -144,3 +144,5 @@ nav.menu .navcta{color:var(--gold2)}
 @media(min-width:1200px){nav.menu .navbtn{font-size:13px;padding:8px 2px}nav.menu .navcta{border:2px solid var(--gold);border-radius:10px;padding:6px 10px;color:var(--gold2)}}
 @media(min-width:900px) and (max-width:1199px){nav.menu .navbtn{display:block;width:100%;border-bottom:1px solid var(--line)}}
 .dd,.ddb,.ddm{display:none}
+
+.heroacct{margin:24px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;color:var(--sub);font-weight:600}

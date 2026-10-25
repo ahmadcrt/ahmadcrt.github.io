@@ -23,6 +23,16 @@
   }
   if (C && C.enabled) { navAuth(); C.onChange(navAuth); }
 
+  /* ---------- homepage call to action ---------- */
+  function homeCta() {
+    var b = $('#home .btns'); if (!b || !C || !C.enabled) return;
+    var old = $('#heroAcct'); if (old) old.remove();
+    var p = document.createElement('div'); p.id = 'heroAcct'; p.className = 'heroacct';
+    p.innerHTML = C.user() ? '<span>Welcome back, ' + esc(dName()) + '.</span><a class="btn g sm" href="dashboard.html">My Dashboard</a>' : '<span>Save your journal and progress on any device.</span><a class="btn g sm" href="account.html#signup">Create Free Account</a><a class="btn o sm" href="account.html#login">Log In</a>';
+    b.insertAdjacentElement('afterend', p);
+  }
+  if (C && C.enabled) { homeCta(); C.onChange(homeCta); }
+
   var notReady = '<div class="card"><h3>Accounts are not set up yet</h3><p>Free accounts are coming to this site soon. All lessons, the quiz, the simulator and the risk calculator work without an account.</p><a class="btn o" href="learn.html">Go to Learn CRT</a></div>';
   var needLogin = '<div class="card"><h3>Please log in</h3><p>Log in to see your personal dashboard.</p><div class="btns"><a class="btn g" href="account.html#login">Log In</a><a class="btn o" href="account.html#signup">Create Free Account</a></div></div>';
 
@@ -94,7 +104,7 @@
     var load = function () {
       md.innerHTML = '<p class="note">Loading your dashboard\u2026</p>';
       var q = function (t, s) { return C.db.select(t, s); };
-      Promise.all([q('lesson_progress', 'select=lesson&order=lesson.asc'), q('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), q('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), q('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=5'), q('journal_entries', 'select=*&order=trade_date.desc,created_at.desc&limit=1000')])
+      Promise.all([q('learning_progress', 'select=lesson&order=lesson.asc'), q('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), q('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), q('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=5'), q('trading_journal', 'select=*&order=trade_date.desc,created_at.desc&limit=1000')])
         .then(function (r) { render(r); }).catch(function (e) { md.innerHTML = '<div class="errbox" role="alert">' + esc(C.friendly(e)) + ' <button class="btn o sm" type="button" id="dRetry">Try again</button></div>'; $('#dRetry').addEventListener('click', load); });
     };
     var render = function (r) {
@@ -119,7 +129,7 @@
       $('#fName').addEventListener('submit', function (e) { e.preventDefault(); var n = $('#nName').value.trim(); if (!n || n.length > 60) { $('#nErr').textContent = 'Enter a name up to 60 characters.'; return; } $('#nErr').textContent = ''; C.updateName(n).then(function () { $('#dAct').textContent = 'Name saved.'; var hd = md.querySelector('h3'); if (hd) hd.textContent = 'Welcome, ' + n; }).catch(function (er) { $('#nErr').textContent = C.friendly(er); }); });
     };
     if (!C || !C.enabled) md.innerHTML = notReady;
-    else if (!C.user()) { md.innerHTML = needLogin; C.onChange(function (ev) { if (ev === 'SIGNED_IN') load(); }); }
+    else if (!C.user()) { md.innerHTML = '<p class="note">Please log in to see your dashboard. Taking you to the login page\u2026</p>' + needLogin; setTimeout(function () { if (!C.user()) location.replace('account.html#login'); }, 900); C.onChange(function (ev) { if (ev === 'SIGNED_IN') load(); }); }
     else load();
   }
 })();
