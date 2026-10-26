@@ -62,6 +62,7 @@
     });
   }
 
+  C.isAdmin = function () { return C.user() ? C.db.rpc('is_admin').then(function (r) { return r === true; }).catch(function () { return false; }) : Promise.resolve(false); };
   C.onChange = function (f) { listeners.push(f); };
   C.user = function () { return sess && sess.user ? sess.user : null; };
   C.name = function () { var u = C.user(); return u && u.user_metadata && u.user_metadata.display_name ? u.user_metadata.display_name : ''; };
@@ -86,7 +87,7 @@
   C.updateName = function (name) {
     return authed('/auth/v1/user', { method: 'PUT', body: { data: { display_name: name } } }).then(function (u) {
       if (sess && u) { sess.user = u; save(sess); }
-      return C.db.upsert('profiles', { id: C.user().id, display_name: name }, 'id').catch(function () { });
+      return C.db.patch('profiles', 'id=eq.' + encodeURIComponent(C.user().id), { display_name: name }).catch(function () { });
     });
   };
 
@@ -94,6 +95,8 @@
     select: function (table, qs) { return authed('/rest/v1/' + table + (qs ? '?' + qs : '')); },
     upsert: function (table, row, conflict) { return authed('/rest/v1/' + table + '?on_conflict=' + conflict, { method: 'POST', body: row, headers: { Prefer: 'resolution=merge-duplicates,return=representation' } }); },
     insertIgnore: function (table, row, conflict) { return authed('/rest/v1/' + table + '?on_conflict=' + conflict, { method: 'POST', body: row, headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' } }); },
+    rpc: function (fn, args) { return authed('/rest/v1/rpc/' + fn, { method: 'POST', body: args || {} }); },
+    patch: function (table, filter, body) { return authed('/rest/v1/' + table + '?' + filter, { method: 'PATCH', body: body, headers: { Prefer: 'return=representation' } }); },
     insert: function (table, row) { return authed('/rest/v1/' + table, { method: 'POST', body: row, headers: { Prefer: 'return=minimal' } }); },
     remove: function (table, filter) { return authed('/rest/v1/' + table + '?' + filter, { method: 'DELETE' }); }
   };

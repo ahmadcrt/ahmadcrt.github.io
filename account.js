@@ -4,6 +4,8 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   var C = window.Cloud, EMAIL = 'Fxahmadey@gmail.com';
   var NAMES = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+  var COURSES = { master_class: 'Forex Master Class', crt_mastery: 'CRT Mastery', crt_pdf: 'Complete CRT Course PDF' };
+  var ESTAT = { requested: 'Requested. Confirmed after payment on WhatsApp.', active: 'Enrolled', completed: 'Completed', cancelled: 'Cancelled' };
   function okEmail(e) { return e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   function busy(btn, on, label) { btn.disabled = on; if (on) { btn.setAttribute('data-l', btn.textContent); btn.textContent = 'Please wait\u2026'; } else btn.textContent = label || btn.getAttribute('data-l') || btn.textContent; }
   function dName() { return (C && C.name && C.name()) || (C && C.user() && C.user().email) || 'student'; }
@@ -15,6 +17,7 @@
     var add = function (tag, text, href, cls) { var e = document.createElement(tag); e.textContent = text; if (href) e.href = href; e.className = 'authitem' + (cls ? ' ' + cls : ''); if (tag === 'button') e.type = 'button'; var cur = location.pathname.split('/').pop(); if (href && href === cur) e.setAttribute('aria-current', 'page'); m.appendChild(e); return e; };
     if (C.user()) {
       add('a', 'MY DASHBOARD', 'dashboard.html');
+      C.isAdmin().then(function (ok) { if (ok && C.user() && !m.querySelector('.adminlink')) { var l = add('a', 'ADMIN', 'admin.html'); l.classList.add('adminlink'); var lo = m.querySelector('.navbtn'); if (lo) m.insertBefore(l, lo); } });
       add('button', 'LOG OUT', null, 'navbtn').addEventListener('click', function () { C.signOut().then(function () { if (/dashboard\.html$/.test(location.pathname)) location.href = 'index.html'; }); });
     } else {
       add('a', 'LOG IN', 'account.html#login');
@@ -23,15 +26,49 @@
   }
   if (C && C.enabled) { navAuth(); C.onChange(navAuth); }
 
-  /* ---------- homepage call to action ---------- */
-  function homeCta() {
-    var b = $('#home .btns'); if (!b || !C || !C.enabled) return;
-    var old = $('#heroAcct'); if (old) old.remove();
-    var p = document.createElement('div'); p.id = 'heroAcct'; p.className = 'heroacct';
-    p.innerHTML = C.user() ? '<span>Welcome back, ' + esc(dName()) + '.</span><a class="btn g sm" href="dashboard.html">My Dashboard</a>' : '<span>Save your journal and progress on any device.</span><a class="btn g sm" href="account.html#signup">Create Free Account</a><a class="btn o sm" href="account.html#login">Log In</a>';
-    b.insertAdjacentElement('afterend', p);
+  /* ---------- sign-up / dashboard buttons on public pages ---------- */
+  function acctCta() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-acct="cta"]'), function (el) {
+      if (!C || !C.enabled) { el.hidden = true; return; }
+      el.hidden = false;
+      if (C.user()) { el.textContent = 'My Dashboard'; el.href = 'dashboard.html'; } else { el.textContent = 'Create Free Account'; el.href = 'account.html#signup'; }
+    });
   }
-  if (C && C.enabled) { homeCta(); C.onChange(homeCta); }
+  acctCta(); if (C && C.enabled) C.onChange(acctCta);
+
+  /* ---------- course tracking buttons ---------- */
+  function trackBtns() { var on = !!(C && C.enabled && C.user()); Array.prototype.forEach.call(document.querySelectorAll('[data-track]'), function (b) { b.hidden = !on; }); }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-track]') : null; if (!b || !C || !C.user()) return;
+    var msg = b.parentNode.querySelector('.ctrack'); b.disabled = true; msg.textContent = 'Saving\u2026';
+    C.db.insertIgnore('enrollments', { course: b.getAttribute('data-course') }, 'user_id,course').then(function () { msg.textContent = 'Added to your dashboard as a request. Your enrolment is confirmed after payment on WhatsApp.'; b.disabled = false; })
+      .catch(function (er) { msg.textContent = C.friendly(er); b.disabled = false; });
+  });
+  trackBtns(); if (C && C.enabled) C.onChange(trackBtns);
+
+  /* ---------- mentorship enquiry ---------- */
+  var mf = $('#mForm');
+  if (mf) {
+    var MLAB = { master_class: 'Forex Master Class guidance', crt_strategy: 'CRT strategy guidance', not_sure: 'not sure yet' };
+    var mval = function () {
+      var n = $('#mName').value.trim(), c = $('#mContact').value.trim(), i = $('#mInterest').value, m = $('#mMsg').value.trim(), er = $('#mErr'); er.textContent = ''; $('#mDone').textContent = '';
+      if (!n || n.length > 60) { er.textContent = 'Enter your name (up to 60 characters).'; return null; }
+      if (c.length < 3 || c.length > 100) { er.textContent = 'Enter your WhatsApp number or email address.'; return null; }
+      if (!i) { er.textContent = 'Choose what you are interested in.'; return null; }
+      return { name: n, contact: c, interest: i, message: m || null };
+    };
+    mf.addEventListener('submit', function (e) {
+      e.preventDefault(); var v = mval(); if (!v) return;
+      window.location.href = 'https://wa.me/2349166116812?text=' + encodeURIComponent('Hello Ahmad, I would like to join mentorship. Name: ' + v.name + '. Contact: ' + v.contact + '. Interested in: ' + MLAB[v.interest] + '.' + (v.message ? ' ' + v.message : ''));
+    });
+    $('#mSend').addEventListener('click', function () {
+      var v = mval(); if (!v) return; var b = this; b.disabled = true; b.textContent = 'Sending\u2026';
+      C.db.insert('mentorship_enquiries', v).then(function () { $('#mDone').textContent = 'Enquiry saved in your account for Ahmad to review. You can also message on WhatsApp.'; b.textContent = 'Send enquiry from my account'; b.disabled = false; $('#mMsg').value = ''; })
+        .catch(function (er) { $('#mErr').textContent = C.friendly(er); b.textContent = 'Send enquiry from my account'; b.disabled = false; });
+    });
+    var mvis = function () { var on = !!(C && C.enabled && C.user()); $('#mSend').hidden = !on; $('#mHint').hidden = on || !(C && C.enabled); };
+    mvis(); if (C && C.enabled) C.onChange(mvis);
+  }
 
   var notReady = '<div class="card"><h3>Accounts are not set up yet</h3><p>Free accounts are coming to this site soon. All lessons, the quiz, the simulator and the risk calculator work without an account.</p><a class="btn o" href="learn.html">Go to Learn CRT</a></div>';
   var needLogin = '<div class="card"><h3>Please log in</h3><p>Log in to see your personal dashboard.</p><div class="btns"><a class="btn g" href="account.html#login">Log In</a><a class="btn o" href="account.html#signup">Create Free Account</a></div></div>';
@@ -104,24 +141,32 @@
     var load = function () {
       md.innerHTML = '<p class="note">Loading your dashboard\u2026</p>';
       var q = function (t, s) { return C.db.select(t, s); };
-      Promise.all([q('learning_progress', 'select=lesson&order=lesson.asc'), q('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), q('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), q('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=5'), q('trading_journal', 'select=*&order=trade_date.desc,created_at.desc&limit=1000')])
+      Promise.all([q('learning_progress', 'select=lesson&order=lesson.asc'), q('quiz_results', 'select=score,total,taken_at&order=taken_at.desc&limit=500'), q('sim_results', 'select=level,score,taken_at&order=taken_at.desc&limit=200'), q('exercise_log', 'select=level,exercise,correct,answered_at&order=answered_at.desc&limit=5'), q('trading_journal', 'select=*&order=trade_date.desc,created_at.desc&limit=1000'), q('enrollments', 'select=course,status,payment_status,created_at&order=created_at.desc').catch(function () { return []; })])
         .then(function (r) { render(r); }).catch(function (e) { md.innerHTML = '<div class="errbox" role="alert">' + esc(C.friendly(e)) + ' <button class="btn o sm" type="button" id="dRetry">Try again</button></div>'; $('#dRetry').addEventListener('click', load); });
     };
+    var ico = function (n) { return '<svg class="ic" aria-hidden="true" focusable="false"><use href="icons.svg#i-' + n + '"/></svg>'; };
+    var ring = function (n, t) { var c = 213.63; return '<svg class="ring" viewBox="0 0 80 80" role="img" aria-label="' + n + ' of ' + t + ' lessons completed"><circle class="rb" cx="40" cy="40" r="34"/><circle class="rf" cx="40" cy="40" r="34" stroke-dasharray="' + c + '" stroke-dashoffset="' + (c * (1 - (t ? n / t : 0))).toFixed(1) + '"/><text x="40" y="47" text-anchor="middle">' + n + '/' + t + '</text></svg>'; };
+    var dc = function (icon, title, body, link) { return '<div class="card dcard2"><div class="dh"><span class="ib sm">' + ico(icon) + '</span><h3>' + title + '</h3></div>' + body + (link || '') + '</div>'; };
+    var kpi = function (v, l) { return '<div class="kpi"><b>' + esc(v) + '</b><span>' + esc(l) + '</span></div>'; };
     var render = function (r) {
-      var les = r[0] || [], qz = r[1] || [], sim = r[2] || [], ex = r[3] || [], j = r[4] || []; rows = j;
+      var les = (r[0] || []).map(function (x) { return x.lesson; }), qz = r[1] || [], sim = r[2] || [], ex = r[3] || [], j = r[4] || [], en = r[5] || []; rows = j;
       var u = C.user(), s = stats(j), best = 0; qz.forEach(function (x) { best = Math.max(best, x.score); });
       var lv = {}; sim.slice().reverse().forEach(function (x) { var o = lv[x.level] || { best: 0, runs: 0 }; o.best = Math.max(o.best, x.score); o.runs++; lv[x.level] = o; });
       var since = u.created_at ? new Date(u.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-      var h = '<div class="card"><h3>Welcome, ' + esc(dName()) + '</h3><p>' + esc(u.email || '') + (since ? ' &middot; member since ' + esc(since) : '') + '</p>' +
+      var nav = [['book', 'Lessons', 'learn.html#learn'], ['target', 'Simulator', 'learn.html#simulator'], ['calc', 'Calculator', 'tools.html#risk'], ['journal', 'Journal', 'tools.html#journal'], ['cap', 'Courses', 'courses.html'], ['arrow', 'Website', 'index.html']];
+      var h = '<nav class="dnav" aria-label="Dashboard">' + nav.map(function (n) { return '<a href="' + n[2] + '">' + ico(n[0]) + '<span>' + n[1] + '</span></a>'; }).join('') + '</nav>';
+      h += '<div class="card"><div class="dh"><span class="ib sm">' + ico('user') + '</span><div><h3 style="margin:0">Welcome, ' + esc(dName()) + '</h3><p class="note" style="margin:0">' + esc(u.email || '') + (since ? ' &middot; member since ' + esc(since) : '') + '</p></div></div>' +
         '<form id="fName" novalidate><label class="f" for="nName">Display name</label><input class="t" id="nName" maxlength="60" value="' + esc(C.name()) + '"><p class="err" id="nErr" role="alert"></p><div class="btns"><button class="btn o sm" type="submit">Save name</button></div></form>' +
-        '<div class="btns" style="margin-top:14px"><button class="btn o sm" type="button" id="dOut">Log Out</button><button class="btn o sm" type="button" id="dPw">Email me a password reset link</button><button class="btn o sm" type="button" id="dCsv">Export journal (CSV)</button></div><p class="note" id="dAct" aria-live="polite"></p></div>';
-      h += '<div class="tdash" style="margin-top:14px"><div class="card"><h3>CRT lessons</h3><p>' + les.length + ' of 8 lessons completed.</p><div class="prog big"><i style="width:' + (les.length / 8 * 100) + '%"></i></div><a class="btn o sm" href="learn.html#learn">Go to lessons</a></div>' +
-        '<div class="card"><h3>Quiz scores</h3><p>' + (qz.length ? 'Last: ' + qz[0].score + ' / ' + qz[0].total + '. Best: ' + best + ' / ' + qz[0].total + '. Attempts: ' + qz.length + '.' : 'No quiz attempts saved yet.') + '</p><a class="btn o sm" href="learn.html#learn">Take the quiz</a></div>' +
-        '<div class="card"><h3>CRT Simulator</h3><p>' + (Object.keys(lv).length ? Object.keys(NAMES).filter(function (k) { return lv[k]; }).map(function (k) { return NAMES[k] + ': best ' + lv[k].best + ' / 3 (' + lv[k].runs + ' run' + (lv[k].runs > 1 ? 's' : '') + ')'; }).join('. ') + '.' : 'No simulator level completed yet.') + '</p>' + (ex.length ? '<p class="note">Recent: ' + ex.map(function (x) { return esc(NAMES[x.level]) + ' ' + esc(x.exercise) + (x.correct ? ' \u2713' : ' \u2717'); }).join(', ') + '</p>' : '') + '<a class="btn o sm" href="learn.html#simulator">Open simulator</a></div>' +
-        '<div class="card"><h3>Trading journal</h3>' + (s.n ? '<p>' + s.n + ' trades: ' + s.w + ' wins, ' + s.l + ' losses, ' + s.b + ' breakeven, ' + s.o + ' open.</p><p>' + (s.wr === null ? 'Win rate: needs at least one closed trade.' : 'Win rate: ' + s.wr + '% of ' + s.closed + ' closed trades.') + '</p><p>' + (s.pl === null ? 'No profit/loss amounts recorded on closed trades.' : 'Closed-trade profit/loss recorded: ' + s.pl + '.') + '</p><p>' + (s.rr === null ? 'Average planned R:R: not enough data.' : 'Average planned R:R: 1 : ' + s.rr + ' (' + s.nrr + ' trade' + (s.nrr > 1 ? 's' : '') + ').') + '</p><p class="note">Open trades are not counted in win rate or profit/loss. Figures use only what you recorded and are not trading advice.</p>' : '<p>No trades recorded yet. Open the journal and add your first trade to see your statistics here.</p>') + '<a class="btn g sm" href="tools.html#journal">Open journal</a></div></div>';
-      if (j.length) h += '<div class="card" style="margin-top:14px"><h3>Recent journal entries</h3>' + j.slice(0, 5).map(function (x) { return '<p>' + esc(x.trade_date) + ' &middot; ' + esc(x.instrument) + ' ' + esc(x.direction) + ' &middot; ' + esc(x.result) + (typeof x.profit_loss === 'number' ? ' &middot; ' + esc(x.profit_loss) : '') + '</p>'; }).join('') + '</div>';
-      h += '<div class="card" style="margin-top:14px"><h3>Quick links</h3><div class="btns"><a class="btn g sm" href="tools.html#risk">Risk Calculator</a><a class="btn o sm" href="learn.html#simulator">CRT Simulator</a><a class="btn o sm" href="tools.html#journal">Trading Journal</a><a class="btn o sm" href="courses.html">Courses</a></div></div>' +
-        '<div class="card" style="margin-top:14px"><h3>Your data</h3><p>Your journal, lesson progress and quiz and simulator results are saved to your account in a database hosted by Supabase, and database rules let each account read only its own records. You can export your journal above.</p><p>Account deletion is handled by request: <a href="mailto:' + EMAIL + '?subject=' + encodeURIComponent('Account deletion request') + '&body=' + encodeURIComponent('Please delete my AHMAD CRT SNIPER account and all saved records. Account email: ' + (u.email || '')) + '">email us to delete your account and records</a>.</p></div>';
+        '<div class="btns" style="margin-top:14px"><a class="btn g sm" href="index.html">Back to website</a><button class="btn o sm" type="button" id="dOut">Log Out</button><button class="btn o sm" type="button" id="dPw">Email me a password reset link</button><button class="btn o sm" type="button" id="dCsv">Export journal (CSV)</button></div><p class="note" id="dAct" aria-live="polite"></p></div>';
+      var cs = en.length ? en.map(function (x) { var paid = x.payment_status === 'verified'; return '<div class="crow"><strong>' + esc(COURSES[x.course] || x.course) + '</strong><span class="chip2 ' + (x.status === 'cancelled' ? 'bad' : x.status === 'active' || x.status === 'completed' ? 'ok' : '') + '">' + esc({ requested: 'Requested', active: 'Enrolled', completed: 'Completed', cancelled: 'Cancelled' }[x.status] || x.status) + '</span><span class="chip2 ' + (paid ? 'ok' : '') + '">' + (paid ? 'Payment verified' : 'Payment not verified yet') + '</span></div>'; }).join('') + '<p class="note">Payments are confirmed by Ahmad after you pay on WhatsApp. Materials are sent by WhatsApp or email.</p>' : '<p>No course added yet. Choose a course and tap Add to my dashboard.</p>';
+      h += '<div class="tdash" style="margin-top:14px">' + dc('cap', 'My courses', cs, '<a class="btn o sm" href="courses.html">View courses</a>');
+      h += dc('book', 'Lessons', '<div class="rrow">' + ring(les.length, 8) + '<div><p style="margin:0"><strong>' + les.length + ' of 8</strong> free lessons completed</p><div class="dots" role="img" aria-label="Lessons completed">' + [1, 2, 3, 4, 5, 6, 7, 8].map(function (n) { return '<span class="dot2' + (les.indexOf(n) > -1 ? ' on' : '') + '"></span>'; }).join('') + '</div></div></div>', '<a class="btn o sm" href="learn.html#learn">Go to lessons</a>');
+      var recent = qz.slice(0, 5).reverse();
+      h += dc('check', 'Quiz scores', qz.length ? '<div class="kpis">' + kpi(qz[0].score + '/' + qz[0].total, 'Last') + kpi(best + '/' + qz[0].total, 'Best') + kpi(qz.length, 'Attempts') + '</div><div class="bars" role="img" aria-label="Your last quiz scores">' + recent.map(function (x) { return '<span style="height:' + Math.max(8, Math.round(x.score / x.total * 100)) + '%" title="' + x.score + '/' + x.total + '"></span>'; }).join('') + '</div>' : '<p>No quiz attempts saved yet.</p>', '<a class="btn o sm" href="learn.html#learn">Take the quiz</a>');
+      h += dc('target', 'CRT Simulator', '<div class="badges">' + Object.keys(NAMES).map(function (k) { var b = lv[k] ? lv[k].best : null; return '<div class="badge2' + (b === 3 ? ' ok' : '') + '"><b>' + NAMES[k] + '</b><span>' + (b === null ? 'Not done' : b + ' / 3') + '</span></div>'; }).join('') + '</div>' + (ex.length ? '<p class="note">Recent: ' + ex.map(function (x) { return esc(NAMES[x.level]) + ' ' + esc(x.exercise) + (x.correct ? ' \u2713' : ' \u2717'); }).join(', ') + '</p>' : ''), '<a class="btn o sm" href="learn.html#simulator">Open simulator</a>');
+      h += dc('journal', 'Trading journal', s.n ? '<div class="kpis">' + kpi(s.n, 'Trades') + kpi(s.wr === null ? '\u2014' : s.wr + '%', 'Win rate') + kpi(s.pl === null ? '\u2014' : s.pl, 'Closed P/L') + kpi(s.rr === null ? '\u2014' : '1:' + s.rr, 'Avg planned R:R') + '</div><p class="note">' + s.w + ' wins, ' + s.l + ' losses, ' + s.b + ' breakeven, ' + s.o + ' open. Win rate counts closed trades only. Figures use only what you recorded and are not trading advice.</p>' : '<p>No trades recorded yet. Add your first trade to see your statistics.</p>', '<a class="btn g sm" href="tools.html#journal">Open journal</a>') + '</div>';
+      if (j.length) h += '<div class="card" style="margin-top:14px"><div class="dh"><span class="ib sm">' + ico('chart') + '</span><h3>Recent journal entries</h3></div>' + j.slice(0, 5).map(function (x) { return '<div class="crow"><strong>' + esc(x.instrument) + ' ' + esc(x.direction) + '</strong><span class="note">' + esc(x.trade_date) + '</span><span class="chip2 ' + (x.result === 'Win' ? 'ok' : x.result === 'Loss' ? 'bad' : '') + '">' + esc(x.result) + '</span>' + (typeof x.profit_loss === 'number' ? '<span class="note">' + esc(x.profit_loss) + '</span>' : '') + '</div>'; }).join('') + '</div>';
+      h += '<div class="card" style="margin-top:14px"><h3>Your data</h3><p>Your journal, progress, course requests and enquiries are saved to your account. Database rules let each account read only its own records. The site owner can see your name, email, course requests, mentorship enquiries and lesson progress, but not your journal.</p><p>Account deletion is handled by request: <a href="mailto:' + EMAIL + '?subject=' + encodeURIComponent('Account deletion request') + '&body=' + encodeURIComponent('Please delete my AHMAD CRT SNIPER account and all saved records. Account email: ' + (u.email || '')) + '">email us to delete your account and records</a>.</p></div>';
       md.innerHTML = h;
       $('#dOut').addEventListener('click', function () { C.signOut().then(function () { location.href = 'index.html'; }); });
       $('#dCsv').addEventListener('click', function () { if (!rows.length) { $('#dAct').textContent = 'There are no journal entries to export yet.'; return; } csv(); $('#dAct').textContent = 'Journal exported.'; });
