@@ -11,7 +11,7 @@
     var q = 'Hello Ahmad, I have a question about your ' + (c.instrument || '') + ' ' + (c.timeframe || '') + ' chart' + (c.date ? ' (' + c.date + ')' : '') + '.';
     return '<article class="acard"><button type="button" class="aimg" data-src="' + esc(c.image) + '" data-title="' + title.replace(/&middot;/g, '-') + '" aria-label="View ' + esc(c.instrument || 'chart') + ' larger"><img src="' + esc(c.image) + '" alt="' + esc((c.instrument || 'Trading') + ' ' + (c.timeframe || '') + ' chart') + '" loading="lazy"><span class="zoomhint">Tap to enlarge</span></button>' +
       '<div class="abody"><div class="atags"><span class="pill Open">Real chart</span>' + (ok ? '<span class="pill Win">Verified</span>' : '<span class="pill">Details pending</span>') + '</div><h3>' + title + '</h3>' +
-      (c.date ? '<p class="note">Chart date: ' + day(c.date) + '</p>' : '') + (c.setup ? '<p><strong>CRT setup:</strong> ' + esc(c.setup) + '</p>' : '<p class="note">Setup details pending.</p>') + (c.explanation ? '<p>' + esc(c.explanation) + '</p>' : '') +
+      (c.date ? '<p class="note">Chart date: ' + day(c.date) + '</p>' : '') + (c.setup ? '<p><strong>CRT setup:</strong> ' + esc(c.setup) + '</p>' : '') + (c.explanation ? '<p>' + esc(c.explanation) + '</p>' : '') +
       (rows ? '<dl class="alev">' + rows + '</dl>' : '') + '<a class="btn o sm" href="https://wa.me/2349166116812?text=' + encodeURIComponent(q) + '">Ask about this chart</a></div></article>';
   }
   function draw(list) { grid.innerHTML = list.map(card).join(''); }
