@@ -11,12 +11,12 @@
 
   var LESSONS = [
     { t: 'CRT fundamentals', p: ['CRT stands for Candle Range Theory. It treats the high and low of one candle as a map for what price may do next.', 'A common model uses three candles: accumulation (the range candle), manipulation (price pushes beyond one side of the range) and distribution (price moves back through the range).', 'This is a framework for reading price, not a rule. Sometimes it works and sometimes it fails.'], k: 'Mark the range first. Decide what you would do before price gets there.' },
-    { t: 'Candle ranges', p: ['A candle range runs from its high to its low. Draw both lines, then add the 50% midpoint halfway between them.', 'Many students use a higher timeframe candle, such as the 4-hour, to set the range, then study smaller timeframes for detail.', 'The diagram below shows a range with its High, Low and 50% midpoint.'], k: 'High, Low and the 50% midpoint are the three lines you mark on every range.', d: true },
-    { t: 'Liquidity', p: ['Liquidity is where many orders rest, usually stop orders just above recent highs and just below recent lows.', 'Price often moves beyond those levels briefly. This is called a sweep. After a sweep, price may reverse, but it may also keep going.', 'A sweep is a clue, never a guarantee.'], k: 'A sweep is a reason to pay attention, not a reason to enter.' },
+    { t: 'Candle ranges', p: ['A candle range runs from its high to its low. Draw both lines, then add the 50% midpoint halfway between them.', 'Many students use a higher timeframe candle, such as the 4-hour, to set the range, then study smaller timeframes for detail.', 'The diagram below shows a range with its High, Low and 50% midpoint.'], k: 'High, Low and the 50% midpoint are the three lines you mark on every range.', d: 'rangeDiagram' },
+    { t: 'Liquidity', d: 'diagSweep', p: ['Liquidity is where many orders rest, usually stop orders just above recent highs and just below recent lows.', 'Price often moves beyond those levels briefly. This is called a sweep. After a sweep, price may reverse, but it may also keep going.', 'A sweep is a clue, never a guarantee.'], k: 'A sweep is a reason to pay attention, not a reason to enter.' },
     { t: 'Market structure', p: ['Structure is the pattern of highs and lows. Higher highs and higher lows describe an uptrend. Lower highs and lower lows describe a downtrend.', 'Check the bigger picture first. A setup that fits the larger direction is usually easier to read than one that fights it.', 'When structure is unclear, skipping the trade is a valid decision.'], k: 'Read the bigger direction before you look for a setup.' },
-    { t: 'Entries', p: ['In CRT, many traders wait for price to sweep one side of the range and then close back inside it. Only then do they look for an entry.', 'Entry ideas include a smaller timeframe shift in structure, or a pullback toward the 50% midpoint.', 'Always decide your stop loss and target before you place the order.'], k: 'Patience matters more than speed. Fewer, clearer trades are easier to manage.' },
+    { t: 'Entries', d: 'diagEntry', p: ['In CRT, many traders wait for price to sweep one side of the range and then close back inside it. Only then do they look for an entry.', 'Entry ideas include a smaller timeframe shift in structure, or a pullback toward the 50% midpoint.', 'Always decide your stop loss and target before you place the order.'], k: 'Patience matters more than speed. Fewer, clearer trades are easier to manage.' },
     { t: 'Confirmations', p: ['Confirmation means waiting for extra evidence. Examples include a candle that closes back inside the range or a shift in structure on a smaller timeframe.', 'A wick alone is weaker evidence than a close. Waiting for a close can mean a later entry, but it filters some false moves.', 'No confirmation removes risk. It only helps you be more selective.'], k: 'Confirmation improves selectivity. It does not remove risk.' },
-    { t: 'Risk management', p: ['Decide how much you are willing to lose before every trade. Many educators suggest risking a small percentage of the account, such as 1% or less.', 'Place the stop loss where the idea is proven wrong, for example beyond the sweep. Then size the position so that a stop-out costs only the amount you chose.', 'Losing trades are normal. Protecting your account lets you keep learning.'], k: 'Size the trade from the stop distance, not from how confident you feel.' },
+    { t: 'Risk management', d: 'diagRisk', p: ['Decide how much you are willing to lose before every trade. Many educators suggest risking a small percentage of the account, such as 1% or less.', 'Place the stop loss where the idea is proven wrong, for example beyond the sweep. Then size the position so that a stop-out costs only the amount you chose.', 'Losing trades are normal. Protecting your account lets you keep learning.'], k: 'Size the trade from the stop distance, not from how confident you feel.' },
     { t: 'Trade execution', p: ['Use a simple checklist: 1) Mark the range. 2) Wait for a sweep. 3) Wait for confirmation. 4) Plan entry, stop and target. 5) Size the position. 6) Execute and leave the plan alone.', 'Record every trade in a journal, including the ones you skipped, and review it weekly.', 'Practise on a demo account first. Nothing here guarantees profit.'], k: 'Plan, execute, journal, review. Repeat.' }
   ];
 
@@ -104,10 +104,9 @@
   var L = $('#lessonBody');
   if (L) {
     var cur = 0, nav = $('#lessonNav'), prev = $('#prevBtn'), next = $('#nextBtn'), bar = $('#progBar'), cnt = $('#lessonCount');
-    var tpl = $('#rangeDiagram');
     LESSONS.forEach(function (l, i) {
       var b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip'; b.textContent = String(i + 1);
+      b.type = 'button'; b.className = 'lcard'; b.innerHTML = '<span class="ln">' + (i + 1) + '</span><span class="lt">' + esc(l.t) + '</span>';
       b.setAttribute('aria-label', 'Lesson ' + (i + 1) + ': ' + l.t);
       b.addEventListener('click', function () { go(i); });
       nav.appendChild(b);
@@ -115,7 +114,7 @@
     var go = function (i) {
       cur = Math.max(0, Math.min(LESSONS.length - 1, i));
       var l = LESSONS[cur];
-      L.innerHTML = '<h3>Lesson ' + (cur + 1) + ': ' + esc(l.t) + '</h3>' + l.p.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + (l.d && tpl ? '<div class="diagram">' + tpl.innerHTML + '</div>' : '') + '<p class="key">' + esc(l.k) + '</p>';
+      L.innerHTML = '<h3>Lesson ' + (cur + 1) + ': ' + esc(l.t) + '</h3>' + l.p.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + (l.d && $('#' + l.d) ? '<div class="diagram">' + $('#' + l.d).innerHTML + '</div>' : '') + '<p class="key">' + esc(l.k) + '</p>';
       cnt.textContent = 'Lesson ' + (cur + 1) + ' of ' + LESSONS.length;
       bar.style.width = ((cur + 1) / LESSONS.length * 100) + '%';
       prev.disabled = cur === 0; next.disabled = cur === LESSONS.length - 1;
@@ -138,6 +137,14 @@
       res.textContent = '';
     };
     render();
+    Q.setAttribute('aria-live', 'polite');
+    Q.addEventListener('change', function (e) {
+      var inp = e.target; if (!inp || inp.type !== 'radio') return;
+      var i = Number(String(inp.name).slice(1)), x = QUIZ[i], el = $('#q' + i); if (!x || !el) return;
+      var ok = Number(inp.value) === x.a; el.className = 'q ' + (ok ? 'ok' : 'bad');
+      $('.ex', el).textContent = (ok ? 'Correct. ' : 'Not quite. ') + x.e;
+      Array.prototype.forEach.call(el.querySelectorAll('input'), function (r) { r.disabled = true; });
+    });
     $('#quizCheck').addEventListener('click', function () {
       var score = 0, answered = 0;
       QUIZ.forEach(function (x, i) {
@@ -246,6 +253,7 @@
       S.set(SIM, { levels: lv, log: (r[3] || []).slice().reverse().map(function (x) { return { t: String(x.answered_at).slice(0, 10), l: x.level, n: x.exercise, ok: x.correct }; }) });
     });
   }
+  function paintNav() { var d = lessonsDone(); Array.prototype.forEach.call(document.querySelectorAll('#lessonNav button'), function (b, i) { b.classList.toggle('done', d.indexOf(i + 1) > -1); }); }
   var L = $('#lessonBody');
   function addDone() {
     if (!L || L.querySelector('#doneBtn')) return;
@@ -253,7 +261,7 @@
     var n = Number(m[1]), p = document.createElement('p'), b = document.createElement('button');
     b.type = 'button'; b.id = 'doneBtn'; b.className = 'btn o sm';
     var paint = function () { var d = lessonsDone().indexOf(n) > -1; b.textContent = d ? 'Lesson completed' : 'Mark lesson complete'; b.setAttribute('aria-pressed', d ? 'true' : 'false'); };
-    b.addEventListener('click', function () { var a = lessonsDone(); if (a.indexOf(n) < 0) a.push(n); S.set(LES, a); sync.lesson(n); paint(); dash(); });
+    b.addEventListener('click', function () { var a = lessonsDone(); if (a.indexOf(n) < 0) a.push(n); S.set(LES, a); sync.lesson(n); paint(); paintNav(); dash(); });
     paint(); p.appendChild(b); L.appendChild(p);
   }
   if (L && window.MutationObserver) { addDone(); new MutationObserver(addDone).observe(L, { childList: true }); }
@@ -493,7 +501,7 @@
     Promise.all(loc.map(function (n) { return Cloud.db.insertIgnore('learning_progress', { lesson: n }, 'user_id,lesson'); }))
       .then(pullAll).then(function () { afterAuth(); }).catch(function (e) { toast(Cloud.friendly(e)); afterAuth(); });
   }
-  function afterAuth() { jInit(); dash(); var b = $('#doneBtn'); if (b && b.parentNode) { b.parentNode.remove(); addDone(); } }
+  function afterAuth() { jInit(); dash(); paintNav(); var b = $('#doneBtn'); if (b && b.parentNode) { b.parentNode.remove(); addDone(); } }
   if (cloudOn) {
     Cloud.onChange(function (ev) { if (ev === 'SIGNED_OUT') { clearLocal(); afterAuth(); } else if (ev === 'SIGNED_IN') startSync(); });
     if (Cloud.user()) startSync(); else afterAuth();

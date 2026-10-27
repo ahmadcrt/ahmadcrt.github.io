@@ -1,0 +1,44 @@
+{
+  "_help": "Edit a chart below. Only set \"verified\": true after you have checked every detail you fill in. Entry, stop loss, take profit and outcome are shown ONLY when verified is true.",
+  "charts": [
+    {
+      "image": "chart-v100-0417.webp",
+      "instrument": "Volatility 100 Index",
+      "timeframe": "15M",
+      "date": "2026-10-17",
+      "verified": false,
+      "setup": "",
+      "explanation": "",
+      "entry": "",
+      "stop_loss": "",
+      "take_profit": "",
+      "outcome": ""
+    },
+    {
+      "image": "chart-v100-0642.webp",
+      "instrument": "Volatility 100 Index",
+      "timeframe": "15M",
+      "date": "2026-10-17",
+      "verified": false,
+      "setup": "",
+      "explanation": "",
+      "entry": "",
+      "stop_loss": "",
+      "take_profit": "",
+      "outcome": ""
+    },
+    {
+      "image": "chart-v25-1604.webp",
+      "instrument": "Volatility 25 Index",
+      "timeframe": "15M",
+      "date": "2026-10-16",
+      "verified": false,
+      "setup": "",
+      "explanation": "",
+      "entry": "",
+      "stop_loss": "",
+      "take_profit": "",
+      "outcome": ""
+    }
+  ]
+}

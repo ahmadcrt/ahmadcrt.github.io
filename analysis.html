@@ -12,25 +12,16 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070d1a'/%3E%3Cpath d='M20 12v40M32 8v34M44 18v36' stroke='%23d9b25a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="page-analysis">
 <a class="skip" href="#main">Skip to content</a>
 <header class="top"><div class="wrap bar">
 <a class="brand" href="index.html" aria-label="AHMAD CRT SNIPER home">AHMAD <span>CRT SNIPER</span></a>
 <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
 <nav class="menu" id="menu" aria-label="Main"><a href="index.html">HOME</a><a href="about.html">ABOUT</a><a href="learn.html">LEARN CRT</a><a href="courses.html">COURSES</a><a href="tools.html">TOOLS</a><a href="breakdown.html">BREAKDOWNS</a><a href="analysis.html" aria-current="page">ANALYSIS</a><a href="brokers.html">BROKERS</a><a href="contact.html">CONTACT</a></nav>
 </div></header>
-<div class="pagehead"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Market Analysis</p><h1>Market Analysis</h1><p>Educational charts with dates and instruments shown accurately.</p></div></div>
+<div class="pagehead"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Market Analysis</p><h1>Market Analysis</h1><p>Real charts. Details only when verified.</p></div></div>
 <main id="main" tabindex="-1">
-<section id="analysis"><div class="wrap">
-<p class="eyebrow">Charts</p><h2>Chart examples</h2>
-<p class="lead2">These are real charts from Deriv synthetic indices. Entry, stop loss, take profit and result details are still pending, so they are not presented as winning or losing trades.</p>
-<div class="grid c3">
-<figure class="card"><span class="badge">REAL CHART &middot; DETAILS PENDING</span><img src="chart-v100-0417.webp" alt="Volatility 100 Index 15 minute chart" loading="lazy"><figcaption>Volatility 100 Index, 15M (17 Oct 2026)</figcaption></figure>
-<figure class="card"><span class="badge">REAL CHART &middot; DETAILS PENDING</span><img src="chart-v100-0642.webp" alt="Volatility 100 Index 15 minute chart, second capture" loading="lazy"><figcaption>Volatility 100 Index, 15M (17 Oct 2026)</figcaption></figure>
-<figure class="card"><span class="badge">REAL CHART &middot; DETAILS PENDING</span><img src="chart-v25-1604.webp" alt="Volatility 25 Index 15 minute chart" loading="lazy"><figcaption>Volatility 25 Index, 15M (16 Oct 2026)</figcaption></figure>
-</div>
-<p class="disc">Examples and historical results do not guarantee future performance. A setup that worked once can fail next time.</p>
-</div></section><section><div class="wrap"><h3>Related pages</h3><div class="rel"><a class="btn o sm" href="breakdown.html">Trade breakdown videos</a><a class="btn o sm" href="learn.html">Learn CRT</a><a class="btn o sm" href="contact.html">Contact</a></div></div></section>
+<section id="analysis"><div class="wrap"><div class="shead"><p class="eyebrow">Market analysis</p><h2>Real chart analysis</h2><p>Charts from my own trading screens. Details are added only after they are verified.</p></div><div class="agrid" id="chartGrid"><article class="acard"><a class="aimg" href="chart-v100-0417.webp"><img src="chart-v100-0417.webp" alt="Volatility 100 Index 15M chart" loading="lazy"></a><div class="abody"><div class="atags"><span class="pill Open">Real chart</span><span class="pill">Details pending</span></div><h3>Volatility 100 Index &middot; 15M</h3><p class="note">Chart date: 2026-10-17</p><p class="note">Setup details pending.</p></div></article><article class="acard"><a class="aimg" href="chart-v100-0642.webp"><img src="chart-v100-0642.webp" alt="Volatility 100 Index 15M chart" loading="lazy"></a><div class="abody"><div class="atags"><span class="pill Open">Real chart</span><span class="pill">Details pending</span></div><h3>Volatility 100 Index &middot; 15M</h3><p class="note">Chart date: 2026-10-17</p><p class="note">Setup details pending.</p></div></article><article class="acard"><a class="aimg" href="chart-v25-1604.webp"><img src="chart-v25-1604.webp" alt="Volatility 25 Index 15M chart" loading="lazy"></a><div class="abody"><div class="atags"><span class="pill Open">Real chart</span><span class="pill">Details pending</span></div><h3>Volatility 25 Index &middot; 15M</h3><p class="note">Chart date: 2026-10-16</p><p class="note">Setup details pending.</p></div></article></div><p class="disc">Examples and historical results do not guarantee future performance. A setup that worked once can fail next time. Educational only, not financial advice.</p><div class="btns" style="justify-content:center"><a class="btn g" href="https://wa.me/2349166116812?text=Hello%20Ahmad%2C%20I%20have%20a%20question%20about%20your%20chart%20analysis.">Ask on WhatsApp</a><a class="btn o" href="breakdown.html">Trade breakdown videos</a></div></div></section><div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Chart viewer" hidden><div class="lbbar"><span id="lbTitle"></span><div><button type="button" class="btn o sm" id="lbZoom" aria-pressed="false">Zoom</button><a class="btn o sm" id="lbOpen" href="#" target="_blank" rel="noopener">Open image</a><button type="button" class="btn g sm" id="lbClose">Close</button></div></div><div class="lbwrap" id="lbWrap"><img id="lbImg" alt=""></div></div>
 </main>
 <footer><div class="wrap">
 <div class="cols">
@@ -46,4 +37,5 @@
 <script src="cloud.js" defer></script>
 <script src="app.js" defer></script>
 <script src="account.js" defer></script>
+<script src="analysis.js" defer></script>
 </body></html>

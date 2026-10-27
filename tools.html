@@ -19,9 +19,9 @@
 <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
 <nav class="menu" id="menu" aria-label="Main"><a href="index.html">HOME</a><a href="about.html">ABOUT</a><a href="learn.html">LEARN CRT</a><a href="courses.html">COURSES</a><a href="tools.html" aria-current="page">TOOLS</a><a href="breakdown.html">BREAKDOWNS</a><a href="analysis.html">ANALYSIS</a><a href="brokers.html">BROKERS</a><a href="contact.html">CONTACT</a></nav>
 </div></header>
-<div class="pagehead"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Trading Tools</p><h1>Trading Tools</h1><p>A risk calculator and a trading journal, both free to use.</p></div></div>
+<div class="pagehead"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Trading Tools</p><h1>Trading Tools</h1><p>Forex session clocks, a risk calculator and a trading journal.</p></div></div>
 <main id="main" tabindex="-1">
-<section id="risk"><div class="wrap">
+<section id="sessions" class="alt"><div class="wrap"><div class="shead"><p class="eyebrow">Live clocks</p><h2>Forex sessions</h2><p>Updates every second. Times adjust automatically for daylight saving.</p></div><div data-sessions="full" aria-live="off"><p class="note">Loading session clocks&hellip;</p></div><details class="more center"><summary>How these times are worked out</summary><ul class="topics"><li>Asian session: 00:00 to 09:00 UTC.</li><li>London: 08:00 to 17:00 London time (Europe/London).</li><li>New York: 08:00 to 17:00 New York time (America/New_York).</li><li>These are common reference windows, not official exchange hours. Forex trades around the clock on weekdays, and sessions show as closed on weekends.</li><li>Nigeria time uses Africa/Lagos (WAT, UTC+1). London and New York change with their own daylight-saving dates.</li></ul></details></div></section><section id="risk"><div class="wrap">
 <p class="eyebrow">Student tool</p><h2>Risk Calculator</h2>
 <p class="lead2">Work out how much money a trade risks and its risk-to-reward ratio before you enter it.</p>
 <form id="riskForm" class="card" novalidate>
@@ -88,5 +88,6 @@
 <script src="supabase-config.js" defer></script>
 <script src="cloud.js" defer></script>
 <script src="app.js" defer></script>
+<script src="sessions.js" defer></script>
 <script src="account.js" defer></script>
 </body></html>

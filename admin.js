@@ -4,7 +4,7 @@
   'use strict';
   var C = window.Cloud, box = document.getElementById('adminBox'); if (!box) return;
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  var COURSES = { master_class: 'Forex Master Class', crt_mastery: 'CRT Mastery', crt_pdf: 'Complete CRT Course PDF' };
+  var COURSES = { master_class: 'Forex Trading Master Class', crt_mastery: 'CRT Mastery', crt_pdf: 'Complete CRT Course PDF' };
   var INTEREST = { master_class: 'Forex Master Class guidance', crt_strategy: 'CRT strategy guidance', not_sure: 'Not sure yet' };
   var flash = '';
   var ES = ['requested', 'active', 'completed', 'cancelled'], QS = ['new', 'contacted', 'closed'];
