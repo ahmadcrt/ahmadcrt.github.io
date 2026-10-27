@@ -273,3 +273,104 @@ body.lb-open{overflow:hidden}body.lb-open .wa,body.page-analysis .wa{display:non
 .dlayout{display:block}.dmain{min-width:0}
 @media(min-width:1000px){.dlayout{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start}.dnav{flex-direction:column;position:sticky;top:84px;overflow:visible;margin:0}.dnav a{border-radius:12px;width:100%}.dnav a[aria-current=page]{border-color:var(--gold);background:rgba(217,178,90,.1)}}
 .band.slim{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;text-align:left;padding:16px 20px;margin-top:16px}
+
+/* ===== v6 DESIGN SYSTEM (Phase 2) =====
+   One type scale, one spacing scale, one card style, one button style.
+   Loaded last so it overrides earlier layers. Remove this block to go back. */
+:root{--r:16px;--shadow:none;--sec:36px;--sec-lg:56px;--pad:16px}
+html,body{max-width:100%}
+body{font-size:16px;line-height:1.55;overflow-x:clip}
+.wrap{padding:0 18px}
+img,svg,video,iframe{max-width:100%}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* type scale */
+h1{font-size:clamp(26px,7vw,36px);line-height:1.15;margin:0 0 10px}
+h2{font-size:clamp(22px,5.4vw,28px);line-height:1.2;margin:0 0 8px}
+h3{font-size:18px;line-height:1.3;margin:0 0 6px}
+.hero2 h1{font-size:clamp(28px,7.6vw,46px);line-height:1.1;margin:0 0 10px}
+.pagehead h1,.doc h1{font-size:clamp(26px,6.6vw,36px)}
+.doc h2{font-size:20px;margin-top:22px}
+.hero p.lead,.hero2 .sub{font-size:17px;margin:0 0 18px}
+.lead2,.pagehead p,.shead p:not(.eyebrow){font-size:16px}
+.eyebrow,.tag{font-size:12px;letter-spacing:.12em;margin:0 0 6px}
+.note,.disc,.disc2,footer,footer p,.crumbs{font-size:14px}
+.disc{padding:12px 14px;margin:16px 0}
+
+/* spacing scale */
+section{padding:var(--sec) 0}
+.hero{padding:30px 0 34px}
+.hero2{padding:26px 0 32px}
+.pagehead{padding:26px 0 6px}
+.pagehead p{margin:0 0 16px}
+.shead{margin:0 auto 18px}
+.lead2{margin:0 0 18px}
+.grid,.tiles,.glance,.agrid,.sess-grid{gap:10px}
+.hgrid{gap:20px}
+.band{padding:20px;border-radius:var(--r)}
+.herorow{margin-bottom:10px}
+.hero svg.mark,.herorow svg.mark{width:60px;height:60px}
+
+/* cards: one look, flat, subtle border */
+.card,.course,.tile,.sess,.acard,.lesson,.q,.entry,.arow,.compare>div,.authside,.dcard,.heroart{border-radius:var(--r);box-shadow:none}
+.card,.lesson{padding:16px}
+.course{padding:16px;gap:6px;background:var(--card)}
+.tile{padding:12px;background:var(--card)}
+.sess{padding:14px;background:var(--card)}
+.abody{padding:14px}
+.course h3{font-size:20px}
+.course .price,.price{font-size:26px;margin:2px 0 6px}
+.tile h3{font-size:16px}
+.tile p{font-size:14px}
+.tile:hover{transform:none}
+.heroart svg{animation:none}
+.hero2{background:radial-gradient(700px 340px at 85% -10%,rgba(217,178,90,.09),transparent 60%),radial-gradient(700px 400px at 0% 0%,#14284f 0,transparent 65%),var(--bg)}
+.ib{width:40px;height:40px;border-radius:12px}
+.ib .ic{width:22px;height:22px}
+
+/* buttons: one set, easy to tap */
+.btn{min-height:46px;padding:10px 18px;border-radius:10px;font-size:15px;border-width:1.5px;letter-spacing:.02em}
+.btn.g{background:var(--gold);box-shadow:none}
+.btn.sm{min-height:44px;padding:8px 14px;font-size:14px}
+.hero2 .btns .btn{min-height:48px;padding:10px 18px}
+.btns,.cbtns{gap:10px}
+.chip{font-size:14px;padding:8px 14px}
+
+/* menu */
+.bar{min-height:56px}
+.brand{font-size:15px}
+.burger{min-height:44px;padding:8px 12px;font-size:15px;border-width:1.5px}
+nav.menu a,nav.menu .navbtn{padding:12px 4px;font-size:15px}
+
+/* forms: 16px stops iPhone zoom on focus */
+input.t,select,textarea{font-size:16px;padding:11px 12px;min-height:46px;border-width:1.5px}
+label.f{margin:12px 0 5px;font-size:15px}
+.opt{font-size:15px;padding:11px 12px}
+
+/* accordions */
+details,details.more{padding:0 14px;margin-bottom:8px;border-radius:12px}
+summary,details.more summary{padding:12px 0;font-size:15px}
+details p{font-size:15px}
+
+/* footer and floating WhatsApp: never cover content */
+footer{padding:24px 0 84px}
+footer .cols a{padding:7px 0}
+.wa{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));padding:10px 14px;font-size:14px}
+#toast{right:84px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+
+@media(min-width:900px){
+:root{--sec:52px}
+body{font-size:17px}
+h1{font-size:44px}
+h2{font-size:30px}
+.hero2 h1{font-size:52px}
+.pagehead h1,.doc h1{font-size:40px}
+.hero{padding:52px 0 56px}
+.hero2{padding:44px 0 52px}
+.pagehead{padding:36px 0 8px}
+.card,.lesson{padding:20px}
+.course{padding:20px}
+.tile{padding:16px}
+.tile h3{font-size:17px}.tile p{font-size:15px}
+.grid,.tiles,.glance,.agrid,.sess-grid{gap:14px}
+}
