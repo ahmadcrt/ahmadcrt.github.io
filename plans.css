@@ -1,0 +1,42 @@
+/* Trading plans manager styles (loaded after style.css on the Tools page) */
+#plansApp .m0{margin:0}
+.pl-new{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 6px}
+.pl-new .t{flex:1 1 220px;width:auto}
+.pl-count{margin:4px 0 12px;font-size:14px}
+.pl-list{display:grid;gap:10px}
+.pl-card .btns{margin-top:10px}
+.pl-ctitle{font-size:18px;margin:0 0 4px;overflow-wrap:anywhere}
+.pl-desc{font-size:15px;color:var(--sub);margin:6px 0 0;overflow-wrap:anywhere}
+.pl-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.pl-status{margin:0 0 10px;min-height:0}
+.pl-st{margin:0 0 6px;font-size:15px;color:var(--sub)}
+.pl-st b{color:var(--text)}
+.pl-status[data-s=saved] .pl-st b{color:#4cc38a}
+.pl-status[data-s=saving] .pl-st b,.pl-status[data-s=dirty] .pl-st b{color:var(--gold2)}
+.pl-status[data-s=error] .pl-st b,.pl-status[data-s=invalid] .pl-st b,.pl-status[data-s=conflict] .pl-st b,.pl-status[data-s=gone] .pl-st b{color:#ffb4a8}
+.pl-status[data-s=error],.pl-status[data-s=invalid],.pl-status[data-s=conflict],.pl-status[data-s=gone]{border:1px solid #ff8f7e;border-radius:12px;padding:10px 12px;background:rgba(255,143,126,.08)}
+.pl-banner{margin:0 0 10px;border-color:var(--gold)}
+.pl-banner .btns{margin-top:10px}
+.pl-h{font-size:16px;margin:18px 0 8px}
+.pl-h .note{font-size:14px;font-weight:400}
+.pl-item{border:1px solid var(--line);border-radius:12px;padding:10px;margin:0 0 8px;background:var(--ink)}
+.pl-fields{display:grid;gap:8px}
+.pl-item .t{font-size:16px;padding:10px 12px;min-height:46px}
+.pl-btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pl-ib{background:var(--card);color:var(--text);border:1.5px solid var(--line);border-radius:10px;min-height:44px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.pl-ib:disabled,.btn:disabled{opacity:.4;cursor:not-allowed}
+.pl-rm{border-color:#ff8f7e;color:#ffb4a8}
+.pl-danger{border-color:#ff8f7e;color:#ffb4a8}
+.pl-actions{margin-top:14px}
+.pl-undo{margin:6px 0 10px;font-size:15px;color:var(--sub)}
+.pl-link{background:none;border:0;color:var(--gold2);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;min-height:44px;padding:0 6px}
+.pl-notice{margin:0 0 10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);font-size:15px}
+.pl-notice.ok{border-color:#4cc38a;color:#bff0d8}
+.pl-notice.err{border-color:#ff8f7e;color:#ffb4a8}
+.pl-prog{font-weight:800;margin:14px 0 6px}
+.pl-bar{height:8px;background:var(--ink);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:10px}
+.pl-bar span{display:block;height:100%;background:var(--gold)}
+.pl-cat-h{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin:14px 0 6px}
+.pl-tick{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin:0 0 8px;background:var(--ink);cursor:pointer;min-height:48px;font-size:16px;overflow-wrap:anywhere}
+.pl-tick input{width:24px;height:24px;flex:0 0 24px;margin:0;accent-color:var(--gold)}
+@media(min-width:700px){.pl-fields{grid-template-columns:200px 1fr}.pl-item{display:flex;gap:10px;align-items:flex-start}.pl-item .pl-fields{flex:1}.pl-btns{margin-top:0;flex:0 0 auto}}
